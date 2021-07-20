@@ -3,8 +3,7 @@ import retro
 import sys
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QApplication,\
-    QWidget, QLabel, QPushButton
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel
 import numpy as np
 
 
@@ -12,32 +11,32 @@ class GameScreen(QWidget):
     def __init__(self):
         super().__init__()
         # 게임 해상도 배수
-        gameScreenResolutionMultiples = 3
+        self.gameScreenResolutionMultiples = 3
         # 게임 환경 생성
-        env = retro.make(game='SuperMarioBros-Nes', state='Level1-1')
+        self.env = retro.make(game='SuperMarioBros-Nes', state='Level1-1')
         # 새 게임 시작
-        env.reset()
+        self.env.reset()
         # 화면 가져오기
-        screen = env.get_screen()
+        self.screen = self.env.get_screen()
         # 창 크기 고정
-        print(screen.shape[0], screen.shape[1])
-        self.setFixedSize(screen.shape[0]*gameScreenResolutionMultiples, screen.shape[1]*gameScreenResolutionMultiples)
+        print(self.screen.shape[0], self.screen.shape[1])
+        self.setFixedSize(self.screen.shape[0]*self.gameScreenResolutionMultiples, self.screen.shape[1]*self.gameScreenResolutionMultiples)
         # 창 제목 설정
         self.setWindowTitle('GA Mario')
 
         # 이미지
-        label_image = QLabel(self)
-
-        image = np.array(screen)
-        qimage = QImage(image, image.shape[1], image.shape[0], QImage.Format_RGB888)
-        pixmap = QPixmap(qimage)
-        pixmap = pixmap.scaled(screen.shape[0]*gameScreenResolutionMultiples, screen.shape[1]*gameScreenResolutionMultiples, Qt.IgnoreAspectRatio)
-
-        print(screen)
-
-        label_image.setPixmap(pixmap)
-        label_image.setGeometry(0, 0, screen.shape[0]*gameScreenResolutionMultiples, screen.shape[1]*gameScreenResolutionMultiples)
-
+        self.env.render()
+        self.screen = self.env.get_screen()
+        self.label_image = QLabel(self)
+        self.image = np.array(self.screen)
+        self.qimage = QImage(self.image, self.image.shape[1], self.image.shape[0], QImage.Format_RGB888)
+        self.pixmap = QPixmap(self.qimage)
+        self.pixmap = self.pixmap.scaled(self.screen.shape[0] * self.gameScreenResolutionMultiples,
+                                         self.screen.shape[1] * self.gameScreenResolutionMultiples,
+                                         Qt.IgnoreAspectRatio)
+        self.label_image.setPixmap(self.pixmap)
+        self.label_image.setGeometry(0, 0, self.screen.shape[0] * self.gameScreenResolutionMultiples,
+                                     self.screen.shape[1] * self.gameScreenResolutionMultiples)
         self.show()
 
 

@@ -12,7 +12,6 @@ class MyApp(QWidget):
         self.setFixedSize(400, 300)
         # 창 제목 설정
         self.setWindowTitle('MyApp')
-
         # 타이머 생성
         self.qtimer = QTimer(self)
         # 타이머에 호출할 함수 연결

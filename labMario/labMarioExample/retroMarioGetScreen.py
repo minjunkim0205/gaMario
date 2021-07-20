@@ -9,7 +9,6 @@ env.reset()
 
 # 화면 가져오기
 screen = env.get_screen()
-
-print(screen.shape)
+print(screen.shape[0], screen.shape[1])
 
 print(screen)

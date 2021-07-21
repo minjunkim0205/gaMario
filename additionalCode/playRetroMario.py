@@ -63,9 +63,9 @@ class RetroSuperMario(QWidget):
             self.key_state[4] = 1
         # Skill
         if key == 75:  # A
-            self.key_state[8] = 1
-        if key == 76:  # B
             self.key_state[0] = 1
+        if key == 76:  # B
+            self.key_state[8] = 1
         # Ui control
         if key == 44:  # SELECT
             self.key_state[2] = 1
@@ -88,9 +88,9 @@ class RetroSuperMario(QWidget):
             self.key_state[4] = 0
         # Skill
         if key == 75:  # A
-            self.key_state[8] = 0
-        if key == 76:  # B
             self.key_state[0] = 0
+        if key == 76:  # B
+            self.key_state[8] = 0
         # Ui control
         if key == 44:  # SELECT
             self.key_state[2] = 0

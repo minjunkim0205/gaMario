@@ -48,7 +48,7 @@ class RetroSuperMario(QWidget):
     # 게임 램값 케싱 업데이트
     def updateGameRamInfo(self):
         self.emulator_ram = self.emulator.get_ram()
-        print("Size:" + str(self.emulator_ram.shape))
+        print("Size:" + str(self.emulator_ram.shape[0]))
         print("Info:Lives | HEX:0x075A | value:" + str(self.emulator_ram[int("0x075A", 16)]))
         print("Info:Coins | HEX:0x075E | value:" + str(self.emulator_ram[int("0x075E", 16)]))
 
@@ -72,9 +72,9 @@ class RetroSuperMario(QWidget):
             self.key_state[4] = 1
         # 스킬
         if key == 75:  # A
-            self.key_state[8] = 1
-        if key == 76:  # B
             self.key_state[0] = 1
+        if key == 76:  # B
+            self.key_state[8] = 1
         # 선택화면 컨트롤 키
         if key == 44:  # SELECT
             self.key_state[2] = 1
@@ -97,9 +97,9 @@ class RetroSuperMario(QWidget):
             self.key_state[4] = 0
         # 스킬
         if key == 75:  # A
-            self.key_state[8] = 0
-        if key == 76:  # B
             self.key_state[0] = 0
+        if key == 76:  # B
+            self.key_state[8] = 0
         # 선택화면 컨트롤 키
         if key == 44:  # SELECT
             self.key_state[2] = 0

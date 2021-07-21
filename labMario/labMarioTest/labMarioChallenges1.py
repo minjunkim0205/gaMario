@@ -25,19 +25,16 @@ class GameScreen(QWidget):
         self.setWindowTitle('GA Mario')
 
         # 이미지
-        self.env.render()
         self.screen = self.env.get_screen()
         self.label_image = QLabel(self)
         self.image = np.array(self.screen)
         self.qimage = QImage(self.image, self.image.shape[1], self.image.shape[0], QImage.Format_RGB888)
         self.pixmap = QPixmap(self.qimage)
-        self.pixmap = self.pixmap.scaled(self.screen.shape[0] * self.gameScreenResolutionMultiples,
-                                         self.screen.shape[1] * self.gameScreenResolutionMultiples,
-                                         Qt.IgnoreAspectRatio)
+        self.pixmap = self.pixmap.scaled(self.screen.shape[0] * self.gameScreenResolutionMultiples, self.screen.shape[1] * self.gameScreenResolutionMultiples, Qt.IgnoreAspectRatio)
         self.label_image.setPixmap(self.pixmap)
-        self.label_image.setGeometry(0, 0, self.screen.shape[0] * self.gameScreenResolutionMultiples,
-                                     self.screen.shape[1] * self.gameScreenResolutionMultiples)
+        self.label_image.setGeometry(0, 0, self.screen.shape[0] * self.gameScreenResolutionMultiples, self.screen.shape[1] * self.gameScreenResolutionMultiples)
         self.show()
+
 
 
 if __name__ == '__main__':

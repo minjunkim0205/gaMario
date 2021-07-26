@@ -19,5 +19,7 @@
 ==================================================================
 0x03AD	Player x pos within current screen offset (화면 캐릭터 절대좌표) * 
 0x00CE   Player y pos on screen (multiply with value at 0x00B5 to get level y pos) (화면 캐릭터 절대좌표) *
-	
+
+0x0500-0x069F	Current tile (Does not effect graphics)
+
 16x16 ?

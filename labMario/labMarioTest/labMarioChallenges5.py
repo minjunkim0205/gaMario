@@ -130,12 +130,13 @@ class VisualAnalysis(QWidget):
 
     # 창이 업데이트 될 때마다 실행되는 함수
     def paintEvent(self, event):
+        self.full_screen_tiles_player_x = game_window.emulator_ram[0x0086] + 255*((game_window.emulator_ram[0x006D]) % 2)
+        self.full_screen_tiles_player_y = game_window.emulator_ram[0x00CE]
         self.full_screen_tiles_raw = game_window.emulator_ram[0x0500:0x069F + 1]
         self.full_screen_tile_count = self.full_screen_tiles_raw.shape[0]
         self.full_screen_page1_tile = self.full_screen_tiles_raw[:self.full_screen_tile_count // 2].reshape((13, 16))
         self.full_screen_page2_tile = self.full_screen_tiles_raw[self.full_screen_tile_count // 2:].reshape((13, 16))
         self.full_screen_tiles = np.concatenate((self.full_screen_page1_tile, self.full_screen_page2_tile), axis=1).astype(np.int)
-        #self.full_screen_tiles[12][31]
         '''
         # Empty = 0x00 - 0
         # Fake = 0x01 - 1
@@ -164,10 +165,14 @@ class VisualAnalysis(QWidget):
                 # 도착 깃발은 초록색으로 출력
                 elif self.full_screen_tiles[i][j] == 36 or self.full_screen_tiles[i][j] == 37:
                     self.graphic.setBrush(QBrush(QColor.fromRgb(178, 230, 25)))
-                # 나머지 블럭들은 모두 갈색
+                # 밟을수 있는 나머지 블럭은 모두 갈색
                 else:
                     self.graphic.setBrush(QBrush(QColor.fromRgb(150, 75, 0)))
                 self.graphic.drawRect(16*j, 16*i, 16, 16)
+        print(self.full_screen_tiles_player_x, self.full_screen_tiles_player_y)
+        self.graphic.setBrush(QBrush(QColor.fromRgb(0, 191, 255)))
+        #self.graphic.drawRect(self.full_screen_tiles_player_x, self.full_screen_tiles_player_y - 16, 16, 16)
+        self.graphic.drawRect(16 * (self.full_screen_tiles_player_x // 16), 16 * (self.full_screen_tiles_player_y // 16) - 16, 16, 16)
         self.graphic.end()
 
 # 메인

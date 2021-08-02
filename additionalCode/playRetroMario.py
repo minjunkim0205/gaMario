@@ -17,6 +17,7 @@ class RetroSuperMario(QWidget):
         self.emulator = retro.make(game='SuperMarioBros-Nes', state='Level1-1')
         self.emulator.reset()
         # Define screen info
+        self.setWindowTitle("Game")
         self.game_screen_resolution_multiples = 2
         self.game_screen = self.emulator.get_screen()
         self.game_screen_width = self.game_screen.shape[0] * self.game_screen_resolution_multiples

@@ -1,5 +1,5 @@
-# 05. labMarioChallenges5.py
-# 화면 정보 램값을 가져와서 시각 분석 창 만들기
+# 06. labMarioChallenges6.py
+# 화면 정보 램값을 가져와서 시각 분석 창 간단하게 만들기
 
 import sys
 import retro
@@ -22,7 +22,6 @@ class RetroSuperMario(QWidget):
         self.game_screen_width = self.game_screen.shape[0] * self.game_screen_resolution_multiples
         self.game_screen_height = self.game_screen.shape[1] * self.game_screen_resolution_multiples
         # 원도우 창 설정
-        self.setWindowTitle("Game")
         self.setFixedSize(self.game_screen_width, self.game_screen_height)
         self.game_screen_label = QLabel(self)
         self.game_screen_label.setGeometry(0, 0, self.game_screen_width, self.game_screen_height)
@@ -116,7 +115,6 @@ class VisualAnalysis(QWidget):
         self.analysis_screen_width = 16 * 32
         self.analysis_screen_height = 16 * 13
         # 원도우 창 설정
-        self.setWindowTitle("Visual Analysis")
         self.setFixedSize(self.analysis_screen_width, self.analysis_screen_height)
         self.analysis_screen_label = QLabel(self)
         self.analysis_screen_label.setGeometry(0, 0, self.analysis_screen_width, self.analysis_screen_height)
@@ -171,6 +169,7 @@ class VisualAnalysis(QWidget):
                 else:
                     self.graphic.setBrush(QBrush(QColor.fromRgb(150, 75, 0)))
                 self.graphic.drawRect(16*j, 16*i, 16, 16)
+        print(self.full_screen_tiles_player_x, self.full_screen_tiles_player_y)
         self.graphic.setBrush(QBrush(QColor.fromRgb(0, 191, 255)))
         #self.graphic.drawRect(self.full_screen_tiles_player_x, self.full_screen_tiles_player_y - 16, 16, 16)
         self.graphic.drawRect(16 * (self.full_screen_tiles_player_x // 16), 16 * (self.full_screen_tiles_player_y // 16) - 16, 16, 16)

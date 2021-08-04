@@ -1,5 +1,5 @@
-# 06. labMarioChallenges6.py
-# 화면 정보 램값을 가져와서 시각 분석 창 만들기
+# 07. labMarioChallenges7.py
+# 시각 분석 창을 학습하기 쉽게 최적화 하기
 
 import sys
 import retro
@@ -132,21 +132,22 @@ class VisualAnalysis(QWidget):
 
     # 창이 업데이트 될 때마다 실행되는 함수
     def paintEvent(self, event):
-        self.full_screen_tiles_player_x = game_window.emulator_ram[0x0086] + 255*((game_window.emulator_ram[0x006D]) % 2)
-        self.full_screen_tiles_player_y = game_window.emulator_ram[0x00CE]
-        self.full_screen_tiles_enemies_x = [-1, -1, -1, -1, -1]
-        self.full_screen_tiles_enemies_y = [-1, -1, -1, -1, -1]
+        # 화면 정보를 가져와 처리 쉽게 처리하기
         self.full_screen_tiles_raw = game_window.emulator_ram[0x0500:0x069F + 1]
         self.full_screen_tile_count = self.full_screen_tiles_raw.shape[0]
         self.full_screen_page1_tile = self.full_screen_tiles_raw[:self.full_screen_tile_count // 2].reshape((13, 16))
         self.full_screen_page2_tile = self.full_screen_tiles_raw[self.full_screen_tile_count // 2:].reshape((13, 16))
         self.full_screen_tiles = np.concatenate((self.full_screen_page1_tile, self.full_screen_page2_tile), axis=1).astype(np.int)
+        # 플레이어 {(0,0)시작}좌표를 full_screen_tiles 에 덮어 씌우기
+        self.full_screen_tiles_player_x = (((game_window.emulator_ram[0x0086]+1)+((game_window.emulator_ram[0x006D]%2)*255))//16)%32
+        self.full_screen_tiles_player_y = ((game_window.emulator_ram[0x00CE]-1)//16)%13
+        self.full_screen_tiles[self.full_screen_tiles_player_y][self.full_screen_tiles_player_x]=-1
+        # 적 {(0,0)시작}좌표를 full_screen_tiles 에 덮어 씌우기
         for i in range(5):
             if(game_window.emulator_ram[0x000F+i] == 1):
-                self.full_screen_tiles_enemies_x[i] = game_window.emulator_ram[0x0087+i] + 255*((game_window.emulator_ram[0x006E+i]) % 2)
-                self.full_screen_tiles_enemies_y[i] = game_window.emulator_ram[0x00CF+i]
-        self.test = game_window.emulator_ram[0x071C] + 255*((game_window.emulator_ram[0x071A]) % 2)
-        print(self.test)
+                self.full_screen_tiles_enemies_x = (((game_window.emulator_ram[0x0087+i]+1)+((game_window.emulator_ram[0x006E+i]%2)*255))//16)%32
+                self.full_screen_tiles_enemies_y = ((game_window.emulator_ram[0x00CF+i]-9)//16)%13
+                self.full_screen_tiles[self.full_screen_tiles_enemies_y][self.full_screen_tiles_enemies_x] = -2
         '''
         # Empty = 0x00 - 0
         # Fake = 0x01 - 1
@@ -166,11 +167,17 @@ class VisualAnalysis(QWidget):
         self.graphic = QPainter()
         self.graphic.begin(self)
         self.graphic.setPen(QPen(QColor.fromRgb(0, 0, 0), 0.1, Qt.SolidLine))
-        # 픽셀화 화면 그리기
+        # 픽셀화 맵 그리기
         for i in range(13):
             for j in range(32):
+                # 플레이어는 푸른색으로 출력
+                if self.full_screen_tiles[i][j] == -1:
+                    self.graphic.setBrush(QBrush(QColor.fromRgb(0, 191, 255)))
+                # 적은 빨간색으로 출력
+                elif self.full_screen_tiles[i][j] == -2:
+                    self.graphic.setBrush(QBrush(QColor.fromRgb(230, 25, 25)))
                 # 빈공간 혹은 코인은 흰색으로 출력
-                if self.full_screen_tiles[i][j] == 0 or self.full_screen_tiles[i][j] == 194:
+                elif self.full_screen_tiles[i][j] == 0 or self.full_screen_tiles[i][j] == 194:
                     self.graphic.setBrush(QBrush(QColor.fromRgb(255, 255, 255)))
                 # 도착 깃발은 초록색으로 출력
                 elif self.full_screen_tiles[i][j] == 36 or self.full_screen_tiles[i][j] == 37:
@@ -179,22 +186,7 @@ class VisualAnalysis(QWidget):
                 else:
                     self.graphic.setBrush(QBrush(QColor.fromRgb(150, 75, 0)))
                 self.graphic.drawRect(16*j, 16*i, 16, 16)
-        # 픽셀화 적 그리기
-        self.graphic.setBrush(QBrush(QColor.fromRgb(230, 25, 25)))
-        for i in range(5):
-            self.graphic.drawRect(16 * (self.full_screen_tiles_enemies_x[i] // 16),
-                                  16 * (self.full_screen_tiles_enemies_y[i] // 16) - 16, 16, 16)
-        # 픽셀화 플레이어 그리기
-        self.graphic.setBrush(QBrush(QColor.fromRgb(0, 191, 255)))
-        self.graphic.drawRect(16 * (self.full_screen_tiles_player_x // 16),
-                              16 * (self.full_screen_tiles_player_y // 16) - 16, 16, 16)
-        # 화면 스크롤링 범위 그리기
-        self.graphic.setBrush(QBrush(QColor.fromRgb(255, 212, 0)))
-        for i in range(16):
-            self.graphic.drawRect(16 * (self.test // 16), 16 * i - 16, 16, 16)
-            self.graphic.drawRect(16 * ((self.test // 16) + 16), 16 * i - 16, 16, 16)
         self.graphic.end()
-
 
 # 메인
 if __name__ == '__main__':
@@ -202,4 +194,3 @@ if __name__ == '__main__':
     game_window = RetroSuperMario()
     analysis_window = VisualAnalysis()
     sys.exit(app.exec_())
-

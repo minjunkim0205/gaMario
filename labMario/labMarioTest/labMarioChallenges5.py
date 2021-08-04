@@ -1,5 +1,5 @@
 # 05. labMarioChallenges5.py
-# 화면 정보 램값을 가져와서 시각 분석 창 만들기
+# 화면 정보 램값을 가져와서 시각 분석 창 간단하게 만들기
 
 import sys
 import retro

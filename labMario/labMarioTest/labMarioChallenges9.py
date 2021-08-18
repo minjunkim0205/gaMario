@@ -1,9 +1,10 @@
-# 08. labMarioChallenges8.py
-# 최적화된 분석창을 필요한 부분만 잘러서 출력하기
+# 09. labMarioChallenges9.py
+# 회면정보를 date 에 넣어서 ai 모델처리후 랜덤 플레이 하게 만들어보기
 
 import sys
 import retro
 import numpy as np
+import tensorflow as tf
 #np.set_printoptions(threshold=sys.maxsize)
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QImage, QPixmap, QPainter, QPen, QBrush, QColor
@@ -55,7 +56,42 @@ class RetroSuperMario(QWidget):
         self.updateGameKeyState()
         self.updateGameScreen()
         self.updateGameRamInfo()
+        self.aiKeyPressEvent()
 
+    def aiKeyPressEvent(self):
+        try:
+            self.aiKeyInput = analysis_window.result
+        except:
+            self.aiKeyInput = [0, 0, 0, 0, 0, 0]
+        # 이동
+        if self.aiKeyInput[0] == 1:  # R
+            self.key_state[7] = 1
+        if self.aiKeyInput[1] == 1:  # L
+            self.key_state[6] = 1
+        if self.aiKeyInput[2] == 1:  # D
+            self.key_state[5] = 1
+        if self.aiKeyInput[3] == 1:  # U
+            self.key_state[4] = 1
+
+        if self.aiKeyInput[0] == 0:  # R
+            self.key_state[7] = 0
+        if self.aiKeyInput[1] == 0:  # L
+            self.key_state[6] = 0
+        if self.aiKeyInput[2] == 0:  # D
+            self.key_state[5] = 0
+        if self.aiKeyInput[3] == 0:  # U
+            self.key_state[4] = 0
+        # 대쉬(스킬), 점프
+        if self.aiKeyInput[4] == 1:  # A
+            self.key_state[0] = 1
+        if self.aiKeyInput[5] == 1:  # B
+            self.key_state[8] = 1
+
+        if self.aiKeyInput[4] == 0:  # A
+            self.key_state[0] = 0
+        if self.aiKeyInput[5] == 0:  # B
+            self.key_state[8] = 0
+    '''
     # 키 누르기
     def keyPressEvent(self, event):
         self.key = event.key()
@@ -108,7 +144,7 @@ class RetroSuperMario(QWidget):
             self.key_state[3] = 0
         if self.key == 47:  # NULL
             self.key_state[1] = 0
-
+    '''
 class VisualAnalysis(QWidget):
     # init
     def __init__(self):
@@ -127,6 +163,11 @@ class VisualAnalysis(QWidget):
         self.analysis_timer.start(1000 // 60)
         # 원도우 띄우기
         self.show()
+        # Ai모델 설정
+        self.model = tf.keras.Sequential([
+            tf.keras.layers.Dense(9, input_shape=(13 * 16,), activation='relu'),
+            tf.keras.layers.Dense(6, activation='sigmoid')
+        ])
 
     def refresh(self):
         self.update()
@@ -155,6 +196,12 @@ class VisualAnalysis(QWidget):
         self.transformed_screen_tiles = self.transformed_screen_tiles_raw[0:13, self.screen_start_position:self.screen_start_position+16]
         # 플레이어의 진행 거리 출력
         #print((game_window.emulator_ram[0x0086]+1)+(game_window.emulator_ram[0x006D]*255))
+        # 뉴럴 네트워크 모델
+        self.date = self.transformed_screen_tiles.flatten()
+        self.predict = self.model.predict(np.array([self.date]))[0]
+        self.result = (self.predict > 0.5).astype(np.int)
+        print(self.result)
+
         '''
         # Empty = 0x00 - 0
         # Fake = 0x01 - 1
